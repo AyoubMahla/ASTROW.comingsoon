@@ -64,7 +64,7 @@
   }
   #confirmBtn:hover { background:#000; color:#fff; }
 
-  /* --- VERSION MOBILE --- */
+  /* ----------- VERSION TABLETTE ----------- */
   @media (max-width: 768px) {
     .logo { width: 80px; }
     .star { width: 80px; height: 80px; }
@@ -72,10 +72,16 @@
     #comingSoon { font-size:16px; }
 
     #registerForm {
-      transform: scale(0.9);
+      padding:8px 10px;
+      gap:6px;
     }
+
+    #countrySelect { width:100px; font-size:0.9rem; padding:8px; }
+    #phoneInput { width:150px; font-size:0.9rem; padding:8px; }
+    #confirmBtn { padding:8px 15px; font-size:0.9rem; }
   }
 
+  /* ----------- VERSION MOBILE ----------- */
   @media (max-width: 480px) {
     .logo { width: 70px; }
     .star { width: 70px; height: 70px; }
@@ -83,8 +89,14 @@
     #comingSoon { font-size:14px; }
 
     #registerForm {
-      transform: scale(0.8);
+      padding:6px 8px;
+      gap:5px;
+      border-width:1.5px;
     }
+
+    #countrySelect { width:90px; font-size:0.8rem; padding:6px; }
+    #phoneInput { width:130px; font-size:0.8rem; padding:6px; }
+    #confirmBtn { padding:6px 12px; font-size:0.8rem; }
   }
 </style>
 </head>
