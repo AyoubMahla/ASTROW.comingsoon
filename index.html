@@ -28,12 +28,8 @@
     padding: 0 20px;
   }
 
-  #logoContainer { display:flex; align-items:center; gap:15px; flex-wrap:wrap; justify-content:center; }
-  
-  .logo {
-    width: 100px;
-    height: auto;
-  }
+  #logoContainer { display:flex; align-items:center; gap:15px; justify-content:center; }
+  .logo { width: 100px; height: auto; }
 
   .star {
     width: 100px;
@@ -49,16 +45,13 @@
 
   #registerForm {
     display:flex; align-items:center; gap:10px;
-    background:rgba(255,255,255,0.05); padding:10px 15px; border:2px solid #fff;
-    border-radius:10px;
-    flex-wrap: wrap;
-    justify-content: center;
+    background:rgba(255,255,255,0.05); padding:10px 15px;
+    border:2px solid #fff; border-radius:10px;
   }
 
   #countrySelect, #phoneInput {
     padding:10px; font-size:1rem; border:none; border-radius:5px; outline:none;
-    background:#fff; color:#000; appearance:none; -webkit-appearance:none;
-    text-align:center; font-family:'AstrowFont';
+    background:#fff; color:#000; text-align:center; font-family:'AstrowFont';
   }
 
   #countrySelect { width:120px; }
@@ -71,44 +64,26 @@
   }
   #confirmBtn:hover { background:#000; color:#fff; }
 
-  /* --- RESPONSIVE DESIGN --- */
+  /* --- VERSION MOBILE --- */
   @media (max-width: 768px) {
     .logo { width: 80px; }
     .star { width: 80px; height: 80px; }
-
     #subtitle { font-size:20px; }
-    #comingSoon { font-size:16px; max-width:260px; }
+    #comingSoon { font-size:16px; }
 
     #registerForm {
-      flex-direction:column;
-      gap:8px;
-      width:100%;
-      max-width:300px;
-      padding:15px;
-    }
-
-    #countrySelect, #phoneInput {
-      width:100%;
-      font-size:1rem;
-    }
-
-    #confirmBtn {
-      width:100%;
-      font-size:1rem;
-      padding:10px;
+      transform: scale(0.9);
     }
   }
 
   @media (max-width: 480px) {
     .logo { width: 70px; }
     .star { width: 70px; height: 70px; }
-
     #subtitle { font-size:18px; }
     #comingSoon { font-size:14px; }
 
     #registerForm {
-      padding:10px;
-      border-width:1px;
+      transform: scale(0.8);
     }
   }
 </style>
