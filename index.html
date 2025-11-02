@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>ASTROW - Coming Soon</title>
 <style>
   @font-face {
@@ -44,30 +44,38 @@
   #subtitle { font-size:25px; margin-bottom:5px; }
   #comingSoon { font-size:20px; margin-bottom:5px; max-width:300px; }
 
-  /* FORMULAIRE */
+  /* --- FORMULAIRE --- */
   #registerForm {
-    display:flex; align-items:center; justify-content:center;
-    gap:10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
     background:rgba(255,255,255,0.05);
     padding:10px 15px;
     border:2px solid #fff;
     border-radius:10px;
-    white-space:nowrap; /* empêche le retour à la ligne */
+    white-space:nowrap;
+    overflow:hidden;
     transform-origin:center;
+    width:auto;
+    max-width:95vw; /* ne dépasse jamais l’écran */
   }
 
   #countrySelect, #phoneInput {
     padding:10px;
     font-size:1rem;
-    border:none; border-radius:5px; outline:none;
+    border:none;
+    border-radius:5px;
+    outline:none;
     background:#fff;
     color:#000;
     text-align:center;
     font-family:'AstrowFont';
+    flex-shrink:1;
   }
 
-  #countrySelect { width:120px; min-width:80px; }
-  #phoneInput { width:180px; min-width:120px; }
+  #countrySelect { width:90px; }
+  #phoneInput { width:130px; }
 
   #confirmBtn {
     padding:10px 20px;
@@ -79,42 +87,31 @@
     font-family:'AstrowFont';
     transition:0.3s;
     border-radius:5px;
-    flex-shrink:0;
+    flex-shrink:1;
   }
-
   #confirmBtn:hover { background:#000; color:#fff; }
 
-  /* --- ADAPTATION MOBILE --- */
-  @media (max-width: 768px) {
-    .logo { width: 80px; }
-    .star { width: 80px; height: 80px; }
-    #subtitle { font-size:20px; }
-    #comingSoon { font-size:16px; }
-
+  /* --- RESPONSIVE --- */
+  @media (max-width: 600px) {
     #registerForm {
-      transform: scale(0.9);
-      gap:6px;
+      gap:5px;
+      padding:8px;
+      transform:scale(0.85);
     }
   }
 
-  @media (max-width: 480px) {
-    .logo { width: 70px; }
-    .star { width: 70px; height: 70px; }
-    #subtitle { font-size:18px; }
-    #comingSoon { font-size:14px; }
-
+  @media (max-width: 450px) {
     #registerForm {
-      transform: scale(0.8);
-      gap:4px;
-      padding:8px;
+      transform:scale(0.75);
     }
   }
 
   @media (max-width: 360px) {
     #registerForm {
-      transform: scale(0.7);
+      transform:scale(0.65);
     }
   }
+
 </style>
 </head>
 <body>
@@ -132,11 +129,11 @@
 
   <form id="registerForm">
     <select id="countrySelect" name="entry.ContryCode">
-      <option value="+33">France +33</option>
-      <option value="+1">USA +1</option>
+      <option value="+33">FR +33</option>
+      <option value="+1">US +1</option>
       <option value="+44">UK +44</option>
-      <option value="+49">Germany +49</option>
-      <option value="+212">Morocco +212</option>
+      <option value="+49">DE +49</option>
+      <option value="+212">MA +212</option>
     </select>
     <input type="tel" id="phoneInput" name="entry.PhoneNumber" placeholder="Phone number" required>
     <button type="submit" id="confirmBtn">Confirm</button>
@@ -144,10 +141,10 @@
 </div>
 
 <script>
-// animation étoiles
 const canvas = document.getElementById('particles');
 const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
 let stars = Array.from({length:100}, () => ({
   x: Math.random()*canvas.width,
@@ -177,37 +174,6 @@ animate();
 window.addEventListener('resize', () => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-});
-
-// soumission du formulaire
-document.getElementById('registerForm').addEventListener('submit', function(e) {
-  e.preventDefault();
-  const country = document.getElementById('countrySelect').value;
-  const phone = document.getElementById('phoneInput').value;
-
-  fetch('https://docs.google.com/forms/d/e/YOUR_FORM_ID/formResponse', {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: `entry.ContryCode=${encodeURIComponent(country)}&entry.PhoneNumber=${encodeURIComponent(phone)}`
-  }).then(() => {
-    document.getElementById('content').innerHTML = `
-      <div style="font-size:24px; font-family:'AstrowFont';">
-        Your number has been registered!<br>
-        You will soon receive a confirmation via SMS.
-      </div>
-    `;
-  }).catch(err => {
-    console.error('Erreur:', err);
-    document.getElementById('content').innerHTML = `
-      <div style="font-size:24px; font-family:'AstrowFont'; color:#ff6666;">
-        Something went wrong, but your number may have been registered.<br>
-        Try again later.
-      </div>
-    `;
-  });
-
-  console.log("Envoyé:", country + phone);
 });
 </script>
 
