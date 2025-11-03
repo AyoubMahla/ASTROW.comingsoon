@@ -39,30 +39,76 @@ canvas {
 #subtitle { font-size:25px; margin-bottom:5px; }
 #comingSoon { font-size:20px; margin-bottom:5px; max-width:300px; }
 
+#formWrapper {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  width:90%;
+  max-width:550px;
+}
+
 #registerForm {
-  display:flex; align-items:center; justify-content:center; gap:10px;
-  background: rgba(255,255,255,0.05); padding:10px 15px;
-  border:2px solid #fff; border-radius:6px;
-  width:90%; max-width:550px; box-sizing:border-box;
-  flex-direction: column;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  background: rgba(255,255,255,0.05);
+  padding:10px 15px;
+  border:2px solid #fff;
+  border-radius:6px;
+  width:100%;
+  box-sizing:border-box;
 }
 
 #countrySelect, #phoneInput, #confirmBtn {
-  flex:1; min-width:0; padding:10px;
-  font-size: clamp(0.8rem, 1.2vw, 1rem); border:none; outline:none;
-  font-family:'AstrowFont'; text-align:center; box-sizing:border-box;
+  flex:1;
+  min-width:0;
+  padding:10px;
+  font-size: clamp(0.8rem, 1.2vw, 1rem);
+  border:none;
+  outline:none;
+  font-family:'AstrowFont';
+  text-align:center;
+  box-sizing:border-box;
 }
 
-#countrySelect, #phoneInput { background: rgba(255,255,255,0.15); color:#fff; border-radius:4px; margin-bottom:5px; }
-#confirmBtn { background:#fff; color:#0a0a0a; cursor:pointer; transition:0.3s; border-radius:4px; flex:0 0 auto; }
+#countrySelect, #phoneInput {
+  background: rgba(255,255,255,0.15);
+  color:#fff;
+  border-radius:4px;
+}
+
+#confirmBtn {
+  background:#fff;
+  color:#0a0a0a;
+  cursor:pointer;
+  transition:0.3s;
+  border-radius:4px;
+  flex:0 0 auto;
+}
 #confirmBtn:hover { background:#000; color:#fff; }
 
-#errorMessage { color:#ff4444; font-size:0.9rem; margin-top:2px; display:none; }
+#errorMessage {
+  color:#ff4444;
+  font-size:0.9rem;
+  margin-top:5px;
+  display:none;
+  text-align:center;
+}
 
 /* Tablet */
-@media (max-width:768px){ #registerForm{max-width:480px; gap:8px;} #countrySelect,#phoneInput{font-size:0.9rem;} }
+@media (max-width:768px){
+  #registerForm { max-width:480px; gap:8px; }
+  #countrySelect, #phoneInput { font-size:0.9rem; }
+}
+
 /* Phone */
-@media (max-width:400px){ #registerForm{gap:6px;padding:8px;} #countrySelect,#phoneInput{font-size:0.8rem;} #confirmBtn{padding:8px 10px;font-size:0.8rem;} }
+@media (max-width:400px){
+  #registerForm { gap:6px; padding:8px; }
+  #countrySelect, #phoneInput { font-size:0.8rem; }
+  #confirmBtn { padding:8px 10px; font-size:0.8rem; }
+}
 </style>
 </head>
 <body>
@@ -78,25 +124,28 @@ canvas {
   <div id="subtitle">Aim the stars.</div>
   <div id="comingSoon">Coming soon... Enter your number to get notified as soon as the drop goes live!</div>
 
-  <form id="registerForm">
-    <select id="countrySelect" name="entry.CountryCode">
-      <option value="+33">France +33</option>
-      <option value="+1">USA +1</option>
-      <option value="+44">UK +44</option>
-      <option value="+49">Germany +49</option>
-      <option value="+212">Morocco +212</option>
-    </select>
-    <input type="tel" id="phoneInput" name="entry.PhoneNumber" placeholder="Phone number" required>
-    <button type="submit" id="confirmBtn">Confirm</button>
+  <div id="formWrapper">
+    <form id="registerForm">
+      <select id="countrySelect" name="entry.CountryCode">
+        <option value="+33">France +33</option>
+        <option value="+1">USA +1</option>
+        <option value="+44">UK +44</option>
+        <option value="+49">Germany +49</option>
+        <option value="+212">Morocco +212</option>
+      </select>
+      <input type="tel" id="phoneInput" name="entry.PhoneNumber" placeholder="Phone number" required>
+      <button type="submit" id="confirmBtn">Confirm</button>
+    </form>
     <div id="errorMessage"></div>
-  </form>
+  </div>
 </div>
 
 <script>
 // ✨ Starry background
 const canvas = document.getElementById('particles');
 const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
 let stars = Array.from({length:100}, () => ({
   x: Math.random()*canvas.width,
@@ -144,7 +193,7 @@ document.getElementById('registerForm').addEventListener('submit', function(e){
   errorEl.style.display = 'none';
   errorEl.textContent = '';
 
-  // Basic phone validation (at least 6 digits)
+  // Basic phone validation
   const numericPhone = phone.replace(/\D/g, '');
   if(numericPhone.length < 6){
     errorEl.textContent = 'Please enter a valid phone number.';
@@ -152,7 +201,7 @@ document.getElementById('registerForm').addEventListener('submit', function(e){
     return;
   }
 
-  // France-specific rule
+  // France-specific validation
   if(country === '+33'){
     if(phone.startsWith('0')) phone = phone.substring(1);
     if(phone.replace(/\D/g, '').length !== 9){
@@ -169,9 +218,17 @@ document.getElementById('registerForm').addEventListener('submit', function(e){
     headers:{'Content-Type':'application/x-www-form-urlencoded'},
     body:`${ENTRY_COUNTRY}=${encodeURIComponent(country)}&${ENTRY_PHONE}=${encodeURIComponent(phone)}`
   }).then(()=>{
-    document.getElementById('content').innerHTML = '<div style="font-size:24px; font-family:\'AstrowFont\';">Your number has been registered!<br>You’ll receive a confirmation soon.</div>';
+    document.getElementById('content').innerHTML = `
+      <div style="font-size:24px; font-family:'AstrowFont';">
+        Your number has been registered!<br>
+        You’ll receive a confirmation soon.
+      </div>`;
   }).catch(()=>{
-    document.getElementById('content').innerHTML = '<div style="font-size:24px; font-family:\'AstrowFont\'; color:#ff6666;">Something went wrong, but your number may still be registered.<br>Please try again later.</div>';
+    document.getElementById('content').innerHTML = `
+      <div style="font-size:24px; font-family:'AstrowFont'; color:#ff6666;">
+        Something went wrong, but your number may still be registered.<br>
+        Please try again later.
+      </div>`;
   });
 });
 </script>
