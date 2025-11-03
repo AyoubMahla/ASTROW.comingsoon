@@ -55,7 +55,7 @@
   border: 2px solid #fff;
   border-radius: 6px;
   width: 90%;
-  max-width: 550px; /* un peu plus large pour les écrans de PC */
+  max-width: 550px;
   box-sizing: border-box;
 }
 
@@ -63,7 +63,7 @@
   flex: 1;
   min-width: 0;
   padding: 10px;
-  font-size: clamp(0.8rem, 1.2vw, 1rem); /* s’adapte selon la taille d’écran */
+  font-size: clamp(0.8rem, 1.2vw, 1rem);
   border: none;
   outline: none;
   font-family: 'AstrowFont';
@@ -83,12 +83,24 @@
   cursor: pointer;
   transition: 0.3s;
   border-radius: 4px;
-  flex: 0 0 auto; /* garde sa taille */
+  flex: 0 0 auto;
 }
 
 #confirmBtn:hover {
   background: #000;
   color: #fff;
+}
+
+/* message d’erreur stylé */
+#errorMsg {
+  color: #ff5c5c;
+  font-size: 16px;
+  margin-top: 10px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+#errorMsg.visible {
+  opacity: 1;
 }
 
 /* ✅ Optimisation tablette */
@@ -116,7 +128,6 @@
     font-size: 0.8rem;
   }
 }
-  #confirmBtn:hover { background:#000; color:#fff; }
 </style>
 </head>
 <body>
@@ -143,6 +154,8 @@
     <input type="tel" id="phoneInput" name="entry.PhoneNumber" placeholder="Phone number" required>
     <button type="submit" id="confirmBtn">Confirm</button>
   </form>
+
+  <div id="errorMsg"></div>
 </div>
 
 <script>
@@ -181,20 +194,51 @@ window.addEventListener('resize', () => {
   canvas.height = window.innerHeight;
 });
 
-// soumission du formulaire sans redirection
+// ✅ Validation avec message stylé
 document.getElementById('registerForm').addEventListener('submit', function(e) {
   e.preventDefault();
   const country = document.getElementById('countrySelect').value;
-  const phone = document.getElementById('phoneInput').value;
+  let phone = document.getElementById('phoneInput').value.trim();
+  const errorMsg = document.getElementById('errorMsg');
 
-  // envoyer au Google Form (mode no-cors)
+  // Nettoyage du numéro
+  phone = phone.replace(/[\s\-]/g, '');
+
+  // Vérification du zéro français
+  let countedPhone = phone;
+  if (country === '+33' && phone.startsWith('0')) {
+    countedPhone = phone.substring(1);
+  }
+
+  // Validation
+  let valid = false;
+  if (country === '+33') {
+    valid = /^0?\d{9}$/.test(phone);
+  } else if (country === '+1') {
+    valid = /^\d{10}$/.test(phone);
+  } else if (country === '+44') {
+    valid = /^\d{10,11}$/.test(phone);
+  } else if (country === '+49') {
+    valid = /^\d{10,12}$/.test(phone);
+  } else if (country === '+212') {
+    valid = /^\d{9}$/.test(phone);
+  }
+
+  if (!valid) {
+    errorMsg.textContent = "Please enter a valid phone number.";
+    errorMsg.classList.add('visible');
+    return;
+  } else {
+    errorMsg.classList.remove('visible');
+  }
+
+  // Envoi au Google Form
   fetch('https://docs.google.com/forms/d/e/YOUR_FORM_ID/formResponse', {
     method: 'POST',
     mode: 'no-cors',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: `entry.ContryCode=${encodeURIComponent(country)}&entry.PhoneNumber=${encodeURIComponent(phone)}`
   }).then(() => {
-    // page de confirmation
     document.getElementById('content').innerHTML = `
       <div style="font-size:24px; font-family:'AstrowFont';">
         Your number has been registered!<br>
@@ -203,7 +247,6 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
     `;
   }).catch(err => {
     console.error('Erreur:', err);
-    // même message de confirmation malgré erreur (ou tu peux afficher erreur)
     document.getElementById('content').innerHTML = `
       <div style="font-size:24px; font-family:'AstrowFont'; color: #ff6666;">
         Something went wrong, but your number may have been registered.<br>
