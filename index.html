@@ -45,7 +45,7 @@
   #subtitle { font-size:25px; margin-bottom:5px; }
   #comingSoon { font-size:20px; margin-bottom:5px; max-width:300px; }
 
-  #registerForm {
+   #registerForm {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -54,16 +54,16 @@
   padding: 10px 15px;
   border: 2px solid #fff;
   border-radius: 6px;
-  width: 90%;               /* S'adapte à la largeur de l'écran */
-  max-width: 450px;         /* Ne dépasse pas une certaine taille */
+  width: 90%;
+  max-width: 550px; /* un peu plus large pour les écrans de PC */
   box-sizing: border-box;
 }
 
 #countrySelect, #phoneInput, #confirmBtn {
-  flex: 1;                  /* Chaque élément prend une part égale */
-  min-width: 0;             /* Important pour que flex puisse réduire les éléments */
+  flex: 1;
+  min-width: 0;
   padding: 10px;
-  font-size: clamp(0.8rem, 2vw, 1rem); /* taille du texte qui s’adapte à l’écran */
+  font-size: clamp(0.8rem, 1.2vw, 1rem); /* s’adapte selon la taille d’écran */
   border: none;
   outline: none;
   font-family: 'AstrowFont';
@@ -83,7 +83,7 @@
   cursor: pointer;
   transition: 0.3s;
   border-radius: 4px;
-  flex: 0 0 auto; /* garde une largeur minimale pour le bouton */
+  flex: 0 0 auto; /* garde sa taille */
 }
 
 #confirmBtn:hover {
@@ -91,7 +91,18 @@
   color: #fff;
 }
 
-/* ✅ Adaptation spéciale pour très petits écrans (mobile < 400px) */
+/* ✅ Optimisation tablette */
+@media (max-width: 768px) {
+  #registerForm {
+    max-width: 480px;
+    gap: 8px;
+  }
+  #countrySelect, #phoneInput {
+    font-size: 0.9rem;
+  }
+}
+
+/* ✅ Optimisation téléphone */
 @media (max-width: 400px) {
   #registerForm {
     gap: 6px;
