@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -57,11 +57,11 @@ canvas {
 #confirmBtn { background:#fff; color:#0a0a0a; cursor:pointer; transition:0.3s; border-radius:4px; flex:0 0 auto; }
 #confirmBtn:hover { background:#000; color:#fff; }
 
-#errorMessage { color:red; font-size:0.9rem; margin-top:2px; display:none; }
+#errorMessage { color:#ff4444; font-size:0.9rem; margin-top:2px; display:none; }
 
-/* Tablette */
+/* Tablet */
 @media (max-width:768px){ #registerForm{max-width:480px; gap:8px;} #countrySelect,#phoneInput{font-size:0.9rem;} }
-/* Téléphone */
+/* Phone */
 @media (max-width:400px){ #registerForm{gap:6px;padding:8px;} #countrySelect,#phoneInput{font-size:0.8rem;} #confirmBtn{padding:8px 10px;font-size:0.8rem;} }
 </style>
 </head>
@@ -76,7 +76,7 @@ canvas {
   </div>
 
   <div id="subtitle">Aim the stars.</div>
-  <div id="comingSoon">Coming soon... Enter your number to be informed as soon as the drop is released!</div>
+  <div id="comingSoon">Coming soon... Enter your number to get notified as soon as the drop goes live!</div>
 
   <form id="registerForm">
     <select id="countrySelect" name="entry.CountryCode">
@@ -93,7 +93,7 @@ canvas {
 </div>
 
 <script>
-// Canvas étoiles
+// ✨ Starry background
 const canvas = document.getElementById('particles');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth; canvas.height = window.innerHeight;
@@ -128,10 +128,10 @@ window.addEventListener('resize', () => {
   canvas.height = window.innerHeight;
 });
 
-// Formulaire avec validation
+// 📱 Form validation + submission
 const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSdN_x3Wnu8OjdMQIPxhfhlWobVidRmi_MVGIqUMAXFGhLxK3g/formResponse';
-const ENTRY_COUNTRY = 'entry.123456789'; // remplace par ton vrai ID
-const ENTRY_PHONE = 'entry.987654321';   // remplace par ton vrai ID
+const ENTRY_COUNTRY = 'entry.123456789'; // Replace with your actual ID
+const ENTRY_PHONE = 'entry.987654321';   // Replace with your actual ID
 
 document.getElementById('registerForm').addEventListener('submit', function(e){
   e.preventDefault();
@@ -140,30 +140,38 @@ document.getElementById('registerForm').addEventListener('submit', function(e){
   let phone = document.getElementById('phoneInput').value.trim();
   const errorEl = document.getElementById('errorMessage');
 
-  // Réinitialiser le message
+  // Reset error
   errorEl.style.display = 'none';
   errorEl.textContent = '';
 
-  // Validation pour la France
+  // Basic phone validation (at least 6 digits)
+  const numericPhone = phone.replace(/\D/g, '');
+  if(numericPhone.length < 6){
+    errorEl.textContent = 'Please enter a valid phone number.';
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  // France-specific rule
   if(country === '+33'){
     if(phone.startsWith('0')) phone = phone.substring(1);
-    if(phone.length < 9){
-      errorEl.textContent = 'Veuillez entrer un numéro français valide (9 chiffres après le 0).';
+    if(phone.replace(/\D/g, '').length !== 9){
+      errorEl.textContent = 'Please enter a valid French phone number (9 digits after the 0).';
       errorEl.style.display = 'block';
       return;
     }
   }
 
-  // Envoi vers Google Form
+  // Send to Google Form
   fetch(GOOGLE_FORM_URL, {
     method:'POST',
     mode:'no-cors',
     headers:{'Content-Type':'application/x-www-form-urlencoded'},
     body:`${ENTRY_COUNTRY}=${encodeURIComponent(country)}&${ENTRY_PHONE}=${encodeURIComponent(phone)}`
   }).then(()=>{
-    document.getElementById('content').innerHTML = '<div style="font-size:24px; font-family:\'AstrowFont\';">Votre numéro a été enregistré !<br>Vous recevrez bientôt une confirmation.</div>';
+    document.getElementById('content').innerHTML = '<div style="font-size:24px; font-family:\'AstrowFont\';">Your number has been registered!<br>You’ll receive a confirmation soon.</div>';
   }).catch(()=>{
-    document.getElementById('content').innerHTML = '<div style="font-size:24px; font-family:\'AstrowFont\'; color:#ff6666;">Une erreur est survenue, mais votre numéro peut avoir été enregistré.<br>Réessayez plus tard.</div>';
+    document.getElementById('content').innerHTML = '<div style="font-size:24px; font-family:\'AstrowFont\'; color:#ff6666;">Something went wrong, but your number may still be registered.<br>Please try again later.</div>';
   });
 });
 </script>
