@@ -128,7 +128,7 @@ canvas {
 </div>
 
 <script>
-// ✨ Background animation
+// Canvas stars
 const canvas = document.getElementById('particles');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
@@ -158,8 +158,12 @@ function animate() {
   requestAnimationFrame(animate);
 }
 animate();
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
 
-// 📱 Phone number formatting per country
+// Phone formatting per country
 const phoneInput = document.getElementById('phoneInput');
 const countrySelect = document.getElementById('countrySelect');
 const errorMessage = document.getElementById('errorMessage');
@@ -167,37 +171,27 @@ const errorMessage = document.getElementById('errorMessage');
 function formatNumber(value, country) {
   const digits = value.replace(/\D/g, '');
   switch (country) {
-    case '+33': // 🇫🇷 France — 0X XX XX XX XX
+    case '+33': // France 06 12 34 56 78
       return digits.replace(/(\d{2})(?=\d)/g, '$1 ').trim();
-    case '+1': // 🇺🇸 USA — (XXX) XXX-XXXX
+    case '+1': // USA (123) 456-7890
       return digits.replace(/^(\d{3})(\d{3})(\d{0,4}).*/, '($1) $2-$3').trim();
-    case '+44': // 🇬🇧 UK — 07XXX XXXXXX
-      return digits.replace(/^(\d{5})(\d{0,6}).*/, '$1 $2').trim();
-    case '+49': // 🇩🇪 Germany — 0151 XXXX XXXX
-      return digits.replace(/^(\d{4})(\d{3,4})(\d{0,4}).*/, '$1 $2 $3').trim();
-    case '+212': // 🇲🇦 Morocco — 6 XX XX XX XX
-      return digits.replace(/^(\d{1})(\d{2})(\d{2})(\d{2})(\d{0,2}).*/, '$1 $2 $3 $4 $5').trim();
+    case '+44': // UK 07123 456789
+      return digits.replace(/^(\d{5})(\d{0,6})/, '$1 $2').trim();
+    case '+49': // Germany 0151 23456789
+      return digits.replace(/^(\d{4})(\d{3,4})(\d{0,4})/, '$1 $2 $3').trim();
+    case '+212': // Morocco 6 12 34 56 78
+      return digits.replace(/^(\d{1})(\d{2})(\d{2})(\d{2})(\d{0,2})/, '$1 $2 $3 $4 $5').trim();
     default:
       return digits;
   }
 }
 
-phoneInput.addEventListener('input', (e) => {
-  const cursorPos = e.target.selectionStart;
-  const raw = e.target.value;
-  const country = countrySelect.value;
-  const digits = raw.replace(/\D/g, '');
-  const formatted = formatNumber(digits, country);
-
-  const diff = formatted.length - raw.length;
-  e.target.value = formatted;
-
-  // keep cursor stable
-  e.target.selectionStart = e.target.selectionEnd = cursorPos + diff;
+phoneInput.addEventListener('blur', () => {
+  phoneInput.value = formatNumber(phoneInput.value, countrySelect.value);
 });
 
-// 🚨 Validation on submit
-document.getElementById('registerForm').addEventListener('submit', function (e) {
+// Validation on submit
+document.getElementById('registerForm').addEventListener('submit', function(e) {
   e.preventDefault();
   const rawNumber = phoneInput.value.replace(/\D/g, '');
   if (rawNumber.length < 9) {
