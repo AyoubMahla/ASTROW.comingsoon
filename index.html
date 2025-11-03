@@ -173,24 +173,39 @@ window.addEventListener('resize', () => {
   canvas.height = window.innerHeight;
 });
 
-// 📱 Auto-format phone input (spaces every 2 digits)
+// 📞 Format number only when leaving field
 const phoneInput = document.getElementById('phoneInput');
-phoneInput.addEventListener('input', (e) => {
-  let value = e.target.value.replace(/\D/g, ''); // only numbers
-  let formatted = value.replace(/(\d{2})(?=\d)/g, '$1 ').trim(); // space every 2 digits
+const countrySelect = document.getElementById('countrySelect');
 
-  // keep cursor position stable
-  const start = e.target.selectionStart;
-  const end = e.target.selectionEnd;
-  e.target.value = formatted;
-  e.target.setSelectionRange(start, end);
+phoneInput.addEventListener('blur', () => {
+  let value = phoneInput.value.replace(/\D/g, '');
+  const country = countrySelect.value;
+  let formatted = value;
+
+  if (country === '+33' && value.length >= 9) { // France: 06 12 34 56 78
+    formatted = value.replace(/(\d{2})(?=\d)/g, '$1 ').trim();
+  } 
+  else if (country === '+1' && value.length >= 10) { // USA: (123) 456 7890
+    formatted = `(${value.substring(0,3)}) ${value.substring(3,6)} ${value.substring(6,10)}`;
+  } 
+  else if (country === '+44' && value.length >= 10) { // UK: 07123 456789
+    formatted = `${value.substring(0,5)} ${value.substring(5)}`;
+  } 
+  else if (country === '+49' && value.length >= 10) { // Germany: 0151 23456789
+    formatted = `${value.substring(0,4)} ${value.substring(4)}`;
+  } 
+  else if (country === '+212' && value.length >= 9) { // Morocco: 06 12 34 56 78
+    formatted = value.replace(/(\d{2})(?=\d)/g, '$1 ').trim();
+  }
+
+  phoneInput.value = formatted;
 });
 
 // 🚨 Validation
 document.getElementById('registerForm').addEventListener('submit', function(e) {
   e.preventDefault();
   const errorDiv = document.getElementById('errorMessage');
-  const phone = phoneInput.value.replace(/\s/g, '');
+  const phone = phoneInput.value.replace(/\D/g, '');
   
   if (phone.length < 9) {
     errorDiv.textContent = 'Please enter a valid phone number.';
