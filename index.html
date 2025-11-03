@@ -163,18 +163,17 @@ window.addEventListener('resize', () => {
   canvas.height = window.innerHeight;
 });
 
-// Phone formatting per country
+// Live phone formatting
 const phoneInput = document.getElementById('phoneInput');
 const countrySelect = document.getElementById('countrySelect');
 const errorMessage = document.getElementById('errorMessage');
 
-function formatNumber(value, country) {
-  const digits = value.replace(/\D/g, '');
+function formatNumberLive(digits, country) {
   switch (country) {
     case '+33': // France 06 12 34 56 78
       return digits.replace(/(\d{2})(?=\d)/g, '$1 ').trim();
     case '+1': // USA (123) 456-7890
-      return digits.replace(/^(\d{3})(\d{3})(\d{0,4}).*/, '($1) $2-$3').trim();
+      return digits.replace(/^(\d{3})(\d{3})(\d{0,4})/, '($1) $2-$3').trim();
     case '+44': // UK 07123 456789
       return digits.replace(/^(\d{5})(\d{0,6})/, '$1 $2').trim();
     case '+49': // Germany 0151 23456789
@@ -186,11 +185,18 @@ function formatNumber(value, country) {
   }
 }
 
-phoneInput.addEventListener('blur', () => {
-  phoneInput.value = formatNumber(phoneInput.value, countrySelect.value);
+phoneInput.addEventListener('input', (e) => {
+  const pos = e.target.selectionStart;
+  const raw = e.target.value;
+  const digits = raw.replace(/\D/g, '');
+  const formatted = formatNumberLive(digits, countrySelect.value);
+  
+  const diff = formatted.length - raw.length;
+  e.target.value = formatted;
+  e.target.selectionStart = e.target.selectionEnd = pos + diff;
 });
 
-// Validation on submit
+// Validation
 document.getElementById('registerForm').addEventListener('submit', function(e) {
   e.preventDefault();
   const rawNumber = phoneInput.value.replace(/\D/g, '');
@@ -208,6 +214,5 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
   `;
 });
 </script>
-
 </body>
 </html>
