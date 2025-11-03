@@ -46,23 +46,65 @@
   #comingSoon { font-size:20px; margin-bottom:5px; max-width:300px; }
 
   #registerForm {
-    display:flex; align-items:center; gap:10px;
-    background:rgba(255,255,255,0.05); padding:10px 15px; border:2px solid #fff;
-  }
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 10px 15px;
+  border: 2px solid #fff;
+  border-radius: 6px;
+  width: 90%;               /* S'adapte à la largeur de l'écran */
+  max-width: 450px;         /* Ne dépasse pas une certaine taille */
+  box-sizing: border-box;
+}
 
+#countrySelect, #phoneInput, #confirmBtn {
+  flex: 1;                  /* Chaque élément prend une part égale */
+  min-width: 0;             /* Important pour que flex puisse réduire les éléments */
+  padding: 10px;
+  font-size: clamp(0.8rem, 2vw, 1rem); /* taille du texte qui s’adapte à l’écran */
+  border: none;
+  outline: none;
+  font-family: 'AstrowFont';
+  text-align: center;
+  box-sizing: border-box;
+}
+
+#countrySelect, #phoneInput {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border-radius: 4px;
+}
+
+#confirmBtn {
+  background: #fff;
+  color: #0a0a0a;
+  cursor: pointer;
+  transition: 0.3s;
+  border-radius: 4px;
+  flex: 0 0 auto; /* garde une largeur minimale pour le bouton */
+}
+
+#confirmBtn:hover {
+  background: #000;
+  color: #fff;
+}
+
+/* ✅ Adaptation spéciale pour très petits écrans (mobile < 400px) */
+@media (max-width: 400px) {
+  #registerForm {
+    gap: 6px;
+    padding: 8px;
+  }
   #countrySelect, #phoneInput {
-    padding:10px; font-size:1rem; border:none; border-radius:5px; outline:none;
-    background:transparent; color:#000; appearance:none; -webkit-appearance:none;
-    text-align:center; font-family:'AstrowFont';
+    font-size: 0.8rem;
   }
-
-  #countrySelect { width:120px; }
-  #phoneInput { width:180px; }
-
   #confirmBtn {
-    padding:10px 20px; font-size:1rem; border:none; background:#fff;
-    color:#0a0a0a; cursor:pointer; font-family:'AstrowFont'; transition:0.3s;
+    padding: 8px 10px;
+    font-size: 0.8rem;
   }
+}
   #confirmBtn:hover { background:#000; color:#fff; }
 </style>
 </head>
