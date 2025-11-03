@@ -163,43 +163,35 @@ window.addEventListener('resize', () => {
   canvas.height = window.innerHeight;
 });
 
-// ✅ Phone formatting (on blur only)
+// ✅ Phone formatting with stable cursor
 const phoneInput = document.getElementById('phoneInput');
 const countrySelect = document.getElementById('countrySelect');
 const errorMessage = document.getElementById('errorMessage');
 
-phoneInput.addEventListener('blur', () => {
-  let number = phoneInput.value.replace(/\D/g, '');
-  const country = countrySelect.value;
-  let formatted = '';
-
-  if (!number) return;
-
+function formatNumber(value, country) {
+  const digits = value.replace(/\D/g, '');
   switch (country) {
-    case '+33': // France
-      if (number.startsWith('33')) number = number.slice(2);
-      if (number.startsWith('0') === false) number = '0' + number;
-      formatted = number.replace(/(\d{2})(?=\d)/g, '$1 ').trim();
-      break;
-    case '+1': // USA
-      if (number.length === 10)
-        formatted = `(${number.slice(0,3)}) ${number.slice(3,6)}-${number.slice(6)}`;
-      else formatted = number;
-      break;
-    case '+44': // UK
-      formatted = number.replace(/(\d{5})(?=\d)/, '$1 ').trim();
-      break;
-    case '+49': // Germany
-      formatted = number.replace(/(\d{4})(?=\d)/, '$1 ').trim();
-      break;
-    case '+212': // Morocco
-      formatted = number.replace(/(\d{2})(?=\d)/g, '$1 ').trim();
-      break;
-    default:
-      formatted = number;
+    case '+33': return digits.replace(/(\d{2})(?=\d)/g, '$1 ').trim(); // France
+    case '+1': return digits.replace(/(\d{3})(\d{3})(\d+)/, '($1) $2-$3').trim(); // USA
+    case '+44': return digits.replace(/(\d{5})(?=\d)/, '$1 ').trim(); // UK
+    case '+49': return digits.replace(/(\d{4})(?=\d)/, '$1 ').trim(); // Germany
+    case '+212': return digits.replace(/(\d{2})(?=\d)/g, '$1 ').trim(); // Morocco
+    default: return digits;
   }
+}
 
-  phoneInput.value = formatted;
+phoneInput.addEventListener('input', (e) => {
+  const { selectionStart } = e.target;
+  const raw = e.target.value;
+  const country = countrySelect.value;
+  const digits = raw.replace(/\D/g, '');
+  const formatted = formatNumber(digits, country);
+
+  const diff = formatted.length - raw.length;
+  e.target.value = formatted;
+
+  // reposition cursor correctly
+  e.target.selectionStart = e.target.selectionEnd = selectionStart + diff;
 });
 
 // 🚨 Validation on submit
