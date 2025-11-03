@@ -5,101 +5,64 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ASTROW</title>
 <style>
-  @font-face {
-    font-family: 'AstrowFont';
-    src: url('AstrowFont.ttf') format('opentype');
-  }
+@font-face {
+  font-family: 'AstrowFont';
+  src: url('AstrowFont.ttf') format('opentype');
+}
 
-  body, html {
-    width:100%; height:100%; margin:0; padding:0;
-    background:#0a0a0a; font-family:'AstrowFont'; color:#fff;
-    display:flex; justify-content:center; align-items:center;
-    flex-direction:column; text-align:center; overflow:hidden;
-  }
+body, html {
+  width:100%; height:100%; margin:0; padding:0;
+  background:#0a0a0a; font-family:'AstrowFont'; color:#fff;
+  display:flex; justify-content:center; align-items:center;
+  flex-direction:column; text-align:center; overflow:hidden;
+}
 
-  canvas {
-    position:fixed; top:0; left:0; width:100%; height:100%;
-    z-index:0; pointer-events:none;
-  }
+canvas {
+  position:fixed; top:0; left:0; width:100%; height:100%;
+  z-index:0; pointer-events:none;
+}
 
-  #content {
-    position:relative; z-index:1;
-    display:flex; flex-direction:column; align-items:center; gap:15px;
-  }
+#content {
+  position:relative; z-index:1;
+  display:flex; flex-direction:column; align-items:center; gap:15px;
+}
 
-  #logoContainer { display:flex; align-items:center; gap:15px; }
-  .logo {
-    width: 100px;
-    height: auto;
-  }
+#logoContainer { display:flex; align-items:center; gap:15px; }
+.logo { width:100px; height:auto; }
+.star {
+  width:100px; height:100px;
+  background: url('whitestar.png') no-repeat center/contain;
+  animation: spin 5s linear infinite;
+}
+@keyframes spin { 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
 
-  .star {
-    width: 100px;
-    height: 100px;
-    background: url('whitestar.png') no-repeat center/contain;
-    animation: spin 5s linear infinite;
-  }
+#subtitle { font-size:25px; margin-bottom:5px; }
+#comingSoon { font-size:20px; margin-bottom:5px; max-width:300px; }
 
-  @keyframes spin { 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
+#registerForm {
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  background: rgba(255,255,255,0.05); padding:10px 15px;
+  border:2px solid #fff; border-radius:6px;
+  width:90%; max-width:550px; box-sizing:border-box;
+  flex-direction: column;
+}
 
-  #subtitle { font-size:25px; margin-bottom:5px; }
-  #comingSoon { font-size:20px; margin-bottom:5px; max-width:300px; }
+#countrySelect, #phoneInput, #confirmBtn {
+  flex:1; min-width:0; padding:10px;
+  font-size: clamp(0.8rem, 1.2vw, 1rem); border:none; outline:none;
+  font-family:'AstrowFont'; text-align:center; box-sizing:border-box;
+}
 
-  #registerForm {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    background: rgba(255, 255, 255, 0.05);
-    padding: 10px 15px;
-    border: 2px solid #fff;
-    border-radius: 6px;
-    width: 90%;
-    max-width: 550px;
-    box-sizing: border-box;
-  }
+#countrySelect, #phoneInput { background: rgba(255,255,255,0.15); color:#fff; border-radius:4px; margin-bottom:5px; }
+#confirmBtn { background:#fff; color:#0a0a0a; cursor:pointer; transition:0.3s; border-radius:4px; flex:0 0 auto; }
+#confirmBtn:hover { background:#000; color:#fff; }
 
-  #countrySelect, #phoneInput, #confirmBtn {
-    flex: 1;
-    min-width: 0;
-    padding: 10px;
-    font-size: clamp(0.8rem, 1.2vw, 1rem);
-    border: none;
-    outline: none;
-    font-family: 'AstrowFont';
-    text-align: center;
-    box-sizing: border-box;
-  }
+#errorMessage { color:red; font-size:0.9rem; margin-top:2px; display:none; }
 
-  #countrySelect, #phoneInput {
-    background: rgba(255, 255, 255, 0.15);
-    color: #fff;
-    border-radius: 4px;
-  }
-
-  #confirmBtn {
-    background: #fff;
-    color: #0a0a0a;
-    cursor: pointer;
-    transition: 0.3s;
-    border-radius: 4px;
-    flex: 0 0 auto;
-  }
-
-  #confirmBtn:hover { background:#000; color:#fff; }
-
-  /* Tablette */
-  @media (max-width: 768px) {
-    #registerForm { max-width:480px; gap:8px; }
-    #countrySelect, #phoneInput { font-size:0.9rem; }
-  }
-
-  /* Téléphone */
-  @media (max-width: 400px) {
-    #registerForm { gap:6px; padding:8px; }
-    #countrySelect, #phoneInput { font-size:0.8rem; }
-    #confirmBtn { padding:8px 10px; font-size:0.8rem; }
-  }
+/* Tablette */
+@media (max-width:768px){ #registerForm{max-width:480px; gap:8px;} #countrySelect,#phoneInput{font-size:0.9rem;} }
+/* Téléphone */
+@media (max-width:400px){ #registerForm{gap:6px;padding:8px;} #countrySelect,#phoneInput{font-size:0.8rem;} #confirmBtn{padding:8px 10px;font-size:0.8rem;} }
 </style>
 </head>
 <body>
@@ -125,6 +88,7 @@
     </select>
     <input type="tel" id="phoneInput" name="entry.PhoneNumber" placeholder="Phone number" required>
     <button type="submit" id="confirmBtn">Confirm</button>
+    <div id="errorMessage"></div>
   </form>
 </div>
 
@@ -164,36 +128,41 @@ window.addEventListener('resize', () => {
   canvas.height = window.innerHeight;
 });
 
-// ------------------ FORMULAIRE ------------------
-
-// Remplace par ton Form ID et tes entry.xxxxx exacts
+// Formulaire avec validation
 const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSdN_x3Wnu8OjdMQIPxhfhlWobVidRmi_MVGIqUMAXFGhLxK3g/formResponse';
-const ENTRY_COUNTRY = 'entry.123456789'; // à remplacer par ton vrai ID
-const ENTRY_PHONE = 'entry.987654321';   // à remplacer par ton vrai ID
+const ENTRY_COUNTRY = 'entry.123456789'; // remplace par ton vrai ID
+const ENTRY_PHONE = 'entry.987654321';   // remplace par ton vrai ID
 
-document.getElementById('registerForm').addEventListener('submit', function(e) {
+document.getElementById('registerForm').addEventListener('submit', function(e){
   e.preventDefault();
-  
+
   const country = document.getElementById('countrySelect').value;
   let phone = document.getElementById('phoneInput').value.trim();
+  const errorEl = document.getElementById('errorMessage');
 
-  // Validation simple pour la France
-  if(country === '+33') {
+  // Réinitialiser le message
+  errorEl.style.display = 'none';
+  errorEl.textContent = '';
+
+  // Validation pour la France
+  if(country === '+33'){
     if(phone.startsWith('0')) phone = phone.substring(1);
-    if(phone.length < 9) {
-      alert('Veuillez entrer un numéro valide (9 chiffres après le 0).');
+    if(phone.length < 9){
+      errorEl.textContent = 'Veuillez entrer un numéro français valide (9 chiffres après le 0).';
+      errorEl.style.display = 'block';
       return;
     }
   }
 
+  // Envoi vers Google Form
   fetch(GOOGLE_FORM_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: `${ENTRY_COUNTRY}=${encodeURIComponent(country)}&${ENTRY_PHONE}=${encodeURIComponent(phone)}`
-  }).then(() => {
+    method:'POST',
+    mode:'no-cors',
+    headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body:`${ENTRY_COUNTRY}=${encodeURIComponent(country)}&${ENTRY_PHONE}=${encodeURIComponent(phone)}`
+  }).then(()=>{
     document.getElementById('content').innerHTML = '<div style="font-size:24px; font-family:\'AstrowFont\';">Votre numéro a été enregistré !<br>Vous recevrez bientôt une confirmation.</div>';
-  }).catch(() => {
+  }).catch(()=>{
     document.getElementById('content').innerHTML = '<div style="font-size:24px; font-family:\'AstrowFont\'; color:#ff6666;">Une erreur est survenue, mais votre numéro peut avoir été enregistré.<br>Réessayez plus tard.</div>';
   });
 });
