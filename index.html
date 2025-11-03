@@ -144,9 +144,7 @@ canvas {
 // ✨ Starry background
 const canvas = document.getElementById('particles');
 const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
+canvas.width = window.innerWidth; canvas.height = window.innerHeight;
 let stars = Array.from({length:100}, () => ({
   x: Math.random()*canvas.width,
   y: Math.random()*canvas.height,
@@ -155,7 +153,6 @@ let stars = Array.from({length:100}, () => ({
   delta: Math.random()*0.02 + 0.005,
   speed: Math.random()*0.3 + 0.02
 }));
-
 function animate() {
   ctx.clearRect(0,0,canvas.width,canvas.height);
   stars.forEach(s => {
@@ -171,65 +168,39 @@ function animate() {
   requestAnimationFrame(animate);
 }
 animate();
-
 window.addEventListener('resize', () => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 });
 
-// 📱 Form validation + submission
-const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSdN_x3Wnu8OjdMQIPxhfhlWobVidRmi_MVGIqUMAXFGhLxK3g/formResponse';
-const ENTRY_COUNTRY = 'entry.123456789'; // Replace with your actual ID
-const ENTRY_PHONE = 'entry.987654321';   // Replace with your actual ID
+// ✳️ Auto-format phone input with spaces every 2 digits
+const phoneInput = document.getElementById('phoneInput');
+phoneInput.addEventListener('input', (e) => {
+  let value = e.target.value.replace(/\D/g, ''); // only numbers
+  value = value.replace(/(.{2})/g, '$1 ').trim(); // space every 2 digits
+  e.target.value = value;
+});
 
-document.getElementById('registerForm').addEventListener('submit', function(e){
+// ✳️ Form validation
+document.getElementById('registerForm').addEventListener('submit', function(e) {
   e.preventDefault();
-
-  const country = document.getElementById('countrySelect').value;
-  let phone = document.getElementById('phoneInput').value.trim();
-  const errorEl = document.getElementById('errorMessage');
-
-  // Reset error
-  errorEl.style.display = 'none';
-  errorEl.textContent = '';
-
-  // Basic phone validation
-  const numericPhone = phone.replace(/\D/g, '');
-  if(numericPhone.length < 6){
-    errorEl.textContent = 'Please enter a valid phone number.';
-    errorEl.style.display = 'block';
+  const errorDiv = document.getElementById('errorMessage');
+  const phone = phoneInput.value.replace(/\s/g, '');
+  
+  if (phone.length < 9) {
+    errorDiv.textContent = 'Please enter a valid phone number.';
+    errorDiv.style.display = 'block';
     return;
   }
 
-  // France-specific validation
-  if(country === '+33'){
-    if(phone.startsWith('0')) phone = phone.substring(1);
-    if(phone.replace(/\D/g, '').length !== 9){
-      errorEl.textContent = 'Please enter a valid French phone number (9 digits after the 0).';
-      errorEl.style.display = 'block';
-      return;
-    }
-  }
-
-  // Send to Google Form
-  fetch(GOOGLE_FORM_URL, {
-    method:'POST',
-    mode:'no-cors',
-    headers:{'Content-Type':'application/x-www-form-urlencoded'},
-    body:`${ENTRY_COUNTRY}=${encodeURIComponent(country)}&${ENTRY_PHONE}=${encodeURIComponent(phone)}`
-  }).then(()=>{
-    document.getElementById('content').innerHTML = `
-      <div style="font-size:24px; font-family:'AstrowFont';">
-        Your number has been registered!<br>
-        You’ll receive a confirmation soon.
-      </div>`;
-  }).catch(()=>{
-    document.getElementById('content').innerHTML = `
-      <div style="font-size:24px; font-family:'AstrowFont'; color:#ff6666;">
-        Something went wrong, but your number may still be registered.<br>
-        Please try again later.
-      </div>`;
-  });
+  errorDiv.style.display = 'none';
+  
+  document.getElementById('content').innerHTML = `
+    <div style="font-size:24px; font-family:'AstrowFont';">
+      Your number has been registered!<br>
+      You will soon receive a confirmation.
+    </div>
+  `;
 });
 </script>
 
