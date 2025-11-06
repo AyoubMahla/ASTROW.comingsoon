@@ -98,6 +98,7 @@ canvas {
   display:flex;
   align-items:center;
   gap:6px;
+  margin-bottom:5px;
 }
 
 #consentWrapper a {
@@ -139,6 +140,7 @@ canvas {
 
       <input type="tel" id="phoneInput" name="entry.PhoneNumber" placeholder="Phone number" required>
 
+      <!-- Consent checkbox juste en dessous du numéro -->
       <div id="consentWrapper">
         <input type="checkbox" id="consentCheckbox" required>
         <label for="consentCheckbox">
@@ -149,6 +151,8 @@ canvas {
 
       <button type="submit" id="confirmBtn">Confirm</button>
     </form>
+
+    <!-- Message d'erreur sous la case de consentement -->
     <div id="errorMessage"></div>
   </div>
 </div>
