@@ -50,11 +50,12 @@ canvas {
 
 #registerForm {
   display:flex;
+  flex-direction:column;
   align-items:center;
   justify-content:center;
   gap:10px;
   background: rgba(255,255,255,0.05);
-  padding:10px 15px;
+  padding:15px;
   border:2px solid #fff;
   border-radius:6px;
   width:100%;
@@ -89,6 +90,21 @@ canvas {
 }
 #confirmBtn:hover { background:#000; color:#fff; }
 
+#consentWrapper {
+  font-size:14px;
+  color:#fff;
+  text-align:left;
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+#consentWrapper a {
+  color:#00ffff;
+  text-decoration:none;
+}
+
 #errorMessage {
   color:#ff4444;
   font-size:0.9rem;
@@ -109,7 +125,7 @@ canvas {
   </div>
 
   <div id="subtitle">Aim the stars.</div>
-  <div id="comingSoon">Coming soon... Enter your number to get notified as soon as the drop goes live and enjoy 10 percent off !</div>
+  <div id="comingSoon">Coming soon... Enter your number to get notified as soon as the drop goes live and enjoy 10 percent off!</div>
 
   <div id="formWrapper">
     <form id="registerForm">
@@ -120,7 +136,17 @@ canvas {
         <option value="+49">Germany +49</option>
         <option value="+212">Morocco +212</option>
       </select>
+
       <input type="tel" id="phoneInput" name="entry.PhoneNumber" placeholder="Phone number" required>
+
+      <div id="consentWrapper">
+        <input type="checkbox" id="consentCheckbox" required>
+        <label for="consentCheckbox">
+          I consent to receive notifications from ASTROW. See 
+          <a href="/privacy" target="_blank">Privacy Policy</a>.
+        </label>
+      </div>
+
       <button type="submit" id="confirmBtn">Confirm</button>
     </form>
     <div id="errorMessage"></div>
@@ -170,18 +196,12 @@ const errorMessage = document.getElementById('errorMessage');
 
 function formatNumberLive(digits, country) {
   switch (country) {
-    case '+33': // France 06 12 34 56 78
-      return digits.replace(/(\d{2})(?=\d)/g, '$1 ').trim();
-    case '+1': // USA (123) 456-7890
-      return digits.replace(/^(\d{3})(\d{3})(\d{0,4})/, '($1) $2-$3').trim();
-    case '+44': // UK 07123 456789
-      return digits.replace(/^(\d{5})(\d{0,6})/, '$1 $2').trim();
-    case '+49': // Germany 0151 23456789
-      return digits.replace(/^(\d{4})(\d{3,4})(\d{0,4})/, '$1 $2 $3').trim();
-    case '+212': // Morocco 612 345678
-      return digits.replace(/^(\d{3})(\d{0,6})/, '$1 $2').trim();
-    default:
-      return digits;
+    case '+33': return digits.replace(/(\d{2})(?=\d)/g, '$1 ').trim();
+    case '+1': return digits.replace(/^(\d{3})(\d{3})(\d{0,4})/, '($1) $2-$3').trim();
+    case '+44': return digits.replace(/^(\d{5})(\d{0,6})/, '$1 $2').trim();
+    case '+49': return digits.replace(/^(\d{4})(\d{3,4})(\d{0,4})/, '$1 $2 $3').trim();
+    case '+212': return digits.replace(/^(\d{3})(\d{0,6})/, '$1 $2').trim();
+    default: return digits;
   }
 }
 
@@ -196,18 +216,27 @@ phoneInput.addEventListener('input', (e) => {
   e.target.selectionStart = e.target.selectionEnd = pos + diff;
 });
 
-// Validation
+// Validation + consent
 document.getElementById('registerForm').addEventListener('submit', function(e) {
   e.preventDefault();
+
+  const consentChecked = document.getElementById('consentCheckbox').checked;
+  if (!consentChecked) {
+    errorMessage.textContent = 'You must consent to receive notifications.';
+    errorMessage.style.display = 'block';
+    return;
+  }
+
   const rawNumber = phoneInput.value.replace(/\D/g, '');
   if (rawNumber.length < 9) {
     errorMessage.textContent = 'Please enter a valid phone number.';
     errorMessage.style.display = 'block';
     return;
   }
+
   errorMessage.style.display = 'none';
   document.getElementById('content').innerHTML = `
-    <div style="font-size:24px; font-family:'AstrowFont';">
+    <div style="font-size:24px; font-family:'AstrowFont'; color:#fff;">
       Your number has been registered!<br>
       You will soon receive a confirmation.
     </div>
