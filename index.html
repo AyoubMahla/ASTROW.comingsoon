@@ -12,7 +12,7 @@
 
 body, html {
   width:100%; height:100%; margin:0; padding:0;
-  background:#0a0a0a; font-family:'AstrowFont'; color:#fff;
+  background:#000; font-family:'AstrowFont'; color:#fff;
   display:flex; justify-content:center; align-items:center;
   flex-direction:column; text-align:center; overflow:hidden;
 }
@@ -22,91 +22,78 @@ canvas {
   z-index:0; pointer-events:none;
 }
 
+/* ✅ Contenu centré */
 #content {
   position:relative; z-index:1;
-  display:flex; flex-direction:column; align-items:center; gap:15px;
+  display:flex; flex-direction:column; align-items:center; gap:20px;
 }
 
-#logoContainer { display:flex; align-items:center; gap:15px; }
+/* ✅ Logo + étoile animée */
+#logoContainer { display:flex; align-items:center; gap:10px; }
 .logo { width:100px; height:auto; }
 .star {
-  width:100px; height:100px;
+  width:90px; height:90px;
   background:url('whitestar.png') no-repeat center/contain;
   animation: spin 5s linear infinite;
 }
 @keyframes spin { 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
 
-#subtitle { font-size:25px; margin-bottom:5px; }
-#comingSoon { font-size:20px; margin-bottom:5px; max-width:300px; }
+/* ✅ Titres */
+#subtitle { font-size:26px; margin-bottom:0; }
+#comingSoon { font-size:18px; max-width:320px; line-height:1.3; }
 
+/* ✅ Formulaire centré */
 #formWrapper {
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  width:90%;
-  max-width:550px;
-  gap:10px;
+  display:flex; flex-direction:column; align-items:center;
+  width:90%; max-width:400px; gap:15px;
 }
 
+/* ✅ Cadre noir transparent avec bord blanc */
 #registerForm {
-  display: flex;
-  flex-direction: column;
-  justify-content: center; /* centre verticalement */
-  align-items: center;     /* centre horizontalement */
-  gap: 10px;
-  background: rgba(255,255,255,0.05);
-  padding: 15px;
-  border: 2px solid #fff;
-  border-radius: 6px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:10px;
+  background:rgba(255,255,255,0.05);
+  padding:15px;
+  border:2px solid #fff;
+  border-radius:6px;
   width:100%;
   box-sizing:border-box;
 }
 
-/* ✅ Ligne country + phone + confirm centrée */
+/* ✅ Ligne inputs + bouton */
 #phoneRow {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  gap: 10px;
+  display:flex; justify-content:center; align-items:center;
+  width:100%; gap:10px;
 }
 
-#countrySelect {
-  flex: 0 0 80px;
-  padding: 10px;
-  background: rgba(255,255,255,0.15);
-  color: #fff;
-  border-radius: 4px;
-  border: none;
-  text-align: center;
+#countrySelect, #phoneInput {
+  background:rgba(255,255,255,0.15);
+  border:none; border-radius:4px; color:#fff;
+  text-align:center; padding:10px;
+  font-family:'AstrowFont';
 }
 
-#phoneInput {
-  flex: 1;
-  padding: 10px;
-  background: rgba(255,255,255,0.15);
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  text-align: center;
-}
+#countrySelect { flex:0 0 70px; }
+#phoneInput { flex:1; }
 
 #confirmBtn {
-  flex: 0 0 100px;
-  padding: 10px;
-  background: #fff;
-  color: #000;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: 0.3s;
+  flex:0 0 100px;
+  padding:10px;
+  background:#fff;
+  color:#000;
+  border-radius:4px;
+  cursor:pointer;
+  transition:0.3s;
+  font-family:'AstrowFont';
 }
 
 #confirmBtn:hover {
-  background: #000;
-  color: #fff;
+  background:#000;
+  color:#fff;
+  border:1px solid #fff;
 }
 
-/* ✅ Case à cocher EN DEHORS du cadre */
+/* ✅ Case à cocher hors du cadre mais dans le même style */
 #consentWrapper {
   font-size:14px;
   color:#fff;
@@ -115,6 +102,11 @@ canvas {
   align-items:center;
   gap:6px;
   justify-content:center;
+  margin-top:5px;
+}
+
+#consentWrapper input {
+  transform:scale(1.2);
 }
 
 #consentWrapper a {
@@ -143,49 +135,37 @@ canvas {
 
   <div id="subtitle">Aim the stars.</div>
   <div id="comingSoon">
-    Coming soon... Enter your number to get notified as soon as the drop goes live 
-    and enjoy 10 percent off! PS le site ne marche toujours pas, votre numéro ne sera 
-    pas sauvegardé veuillez réessayer plus tard.
+    Coming soon... Enter your number to be informed as soon as the drop is released!
   </div>
 
   <div id="formWrapper">
-
-    <!-- ✅ FORMULAIRE (cadre) -->
     <form id="registerForm">
-
-      <!-- ✅ Country + Phone + Confirm sur une ligne -->
       <div id="phoneRow">
-        <select id="countrySelect" name="entry.CountryCode">
-          <option value="+33">+33</option>
-          <option value="+1">+1</option>
-          <option value="+44">+44</option>
-          <option value="+49">+49</option>
-          <option value="+212">+212</option>
+        <select id="countrySelect">
+          <option value="+33">FR +33</option>
+          <option value="+1">US +1</option>
+          <option value="+44">UK +44</option>
+          <option value="+49">DE +49</option>
+          <option value="+212">MA +212</option>
         </select>
-
-        <input type="tel" id="phoneInput" name="entry.PhoneNumber" placeholder="Phone number" required>
-
+        <input type="tel" id="phoneInput" placeholder="Phone number" required>
         <button type="submit" id="confirmBtn">Confirm</button>
       </div>
-
     </form>
 
-    <!-- ✅ CASE À COCHER EN DEHORS DU CADRE -->
     <div id="consentWrapper">
       <input type="checkbox" id="consentCheckbox" required>
       <label for="consentCheckbox">
-        I consent to receive notifications from ASTROW. See 
-        <a href="/privacy" target="_blank">Privacy Policy</a>.
+        I consent to receive notifications from ASTROW.
       </label>
     </div>
 
     <div id="errorMessage"></div>
-
   </div>
 </div>
 
 <script>
-// Canvas stars
+// Canvas animation
 const canvas = document.getElementById('particles');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
@@ -216,53 +196,18 @@ function animate() {
 }
 animate();
 
-// Formatting
-const phoneInput = document.getElementById('phoneInput');
-const countrySelect = document.getElementById('countrySelect');
-
-function formatNumberLive(digits, country) {
-  switch (country) {
-    case '+33': return digits.replace(/(\d{2})(?=\d)/g, '$1 ').trim();
-    case '+1': return digits.replace(/^(\d{3})(\d{3})(\d{0,4})/, '($1) $2-$3').trim();
-    case '+44': return digits.replace(/^(\d{5})(\d{0,6})/, '$1 $2').trim();
-    case '+49': return digits.replace(/^(\d{4})(\d{3,4})(\d{0,4})/, '$1 $2 $3').trim();
-    case '+212': return digits.replace(/^(\d{3})(\d{0,6})/, '$1 $2').trim();
-    default: return digits;
-  }
-}
-
-phoneInput.addEventListener('input', e => {
-  const pos = e.target.selectionStart;
-  const raw = e.target.value;
-  const digits = raw.replace(/\D/g, '');
-  const formatted = formatNumberLive(digits, countrySelect.value);
-  const diff = formatted.length - raw.length;
-  e.target.value = formatted;
-  e.target.selectionStart = e.target.selectionEnd = pos + diff;
-});
-
-// Validation
-document.getElementById('registerForm').addEventListener('submit', function(e) {
+const form = document.getElementById('registerForm');
+form.addEventListener('submit', e => {
   e.preventDefault();
-
-  const consentChecked = document.getElementById('consentCheckbox').checked;
-  if (!consentChecked) {
-    document.getElementById('errorMessage').textContent = 'You must consent.';
-    document.getElementById('errorMessage').style.display = 'block';
+  const checkbox = document.getElementById('consentCheckbox');
+  const error = document.getElementById('errorMessage');
+  if (!checkbox.checked) {
+    error.textContent = 'You must consent.';
+    error.style.display = 'block';
     return;
   }
-
-  const rawNumber = phoneInput.value.replace(/\D/g, '');
-  if (rawNumber.length < 9) {
-    document.getElementById('errorMessage').textContent = 'Invalid phone number.';
-    document.getElementById('errorMessage').style.display = 'block';
-    return;
-  }
-
-  document.getElementById('errorMessage').style.display = 'none';
-  document.getElementById('content').innerHTML = `
-    <div style="font-size:24px;">Your number has been registered!</div>
-  `;
+  error.style.display = 'none';
+  document.getElementById('content').innerHTML = '<div style="font-size:24px;">Your number has been registered!</div>';
 });
 </script>
 
