@@ -62,6 +62,13 @@ canvas {
   box-sizing:border-box;
 }
 
+/* Ligne country code + numéro */
+#phoneRow {
+  display:flex;
+  width:100%;
+  gap:10px;
+}
+
 #countrySelect, #phoneInput, #confirmBtn {
   flex:1;
   min-width:0;
@@ -78,6 +85,10 @@ canvas {
   background:rgba(255,255,255,0.15);
   color:#fff;
   border-radius:4px;
+}
+
+#countrySelect {
+  flex:0 0 120px;
 }
 
 #confirmBtn {
@@ -130,17 +141,20 @@ canvas {
 
   <div id="formWrapper">
     <form id="registerForm">
-      <select id="countrySelect" name="entry.CountryCode">
-        <option value="+33">France +33</option>
-        <option value="+1">USA +1</option>
-        <option value="+44">UK +44</option>
-        <option value="+49">Germany +49</option>
-        <option value="+212">Morocco +212</option>
-      </select>
 
-      <input type="tel" id="phoneInput" name="entry.PhoneNumber" placeholder="Phone number" required>
+      <!-- Country code + phone number on same line -->
+      <div id="phoneRow">
+        <select id="countrySelect" name="entry.CountryCode">
+          <option value="+33">+33</option>
+          <option value="+1">+1</option>
+          <option value="+44">+44</option>
+          <option value="+49">+49</option>
+          <option value="+212">+212</option>
+        </select>
 
-      <!-- Consent checkbox juste en dessous du numéro -->
+        <input type="tel" id="phoneInput" name="entry.PhoneNumber" placeholder="Phone number" required>
+      </div>
+
       <div id="consentWrapper">
         <input type="checkbox" id="consentCheckbox" required>
         <label for="consentCheckbox">
@@ -152,7 +166,6 @@ canvas {
       <button type="submit" id="confirmBtn">Confirm</button>
     </form>
 
-    <!-- Message d'erreur sous la case de consentement -->
     <div id="errorMessage"></div>
   </div>
 </div>
@@ -193,7 +206,7 @@ window.addEventListener('resize', () => {
   canvas.height = window.innerHeight;
 });
 
-// Live phone formatting
+// Live formatting
 const phoneInput = document.getElementById('phoneInput');
 const countrySelect = document.getElementById('countrySelect');
 const errorMessage = document.getElementById('errorMessage');
@@ -214,13 +227,12 @@ phoneInput.addEventListener('input', (e) => {
   const raw = e.target.value;
   const digits = raw.replace(/\D/g, '');
   const formatted = formatNumberLive(digits, countrySelect.value);
-  
   const diff = formatted.length - raw.length;
   e.target.value = formatted;
   e.target.selectionStart = e.target.selectionEnd = pos + diff;
 });
 
-// Validation + consent
+// Validation
 document.getElementById('registerForm').addEventListener('submit', function(e) {
   e.preventDefault();
 
