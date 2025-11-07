@@ -20,10 +20,8 @@ export default async function handler(req, res) {
     });
 
     const sheets = google.sheets({ version: 'v4', auth });
-    const spreadsheetId = process.env.SPREADSHEET_ID;
-
     await sheets.spreadsheets.values.append({
-      spreadsheetId,
+      spreadsheetId: process.env.SPREADSHEET_ID,
       range: 'A:B',
       valueInputOption: 'RAW',
       requestBody: { values: [[country, phone]] },
@@ -32,7 +30,6 @@ export default async function handler(req, res) {
     return res.status(200).json({ message: 'Number saved!' });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: 'Error saving number', error });
+    return res.status(500).json({ message: 'Error saving number', error: error.message });
   }
 }
-
