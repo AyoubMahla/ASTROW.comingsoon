@@ -45,7 +45,8 @@ canvas {
 /* ✅ Formulaire centré */
 #formWrapper {
   display:flex; flex-direction:column; align-items:center;
-  width:90%; max-width:400px; gap:15px;
+  width:90%; max-width:480px; /* ⬅️ élargi le cadre */
+  gap:15px;
 }
 
 /* ✅ Cadre noir transparent avec bord blanc */
@@ -53,7 +54,7 @@ canvas {
   display:flex; flex-direction:column; align-items:center; justify-content:center;
   gap:10px;
   background:rgba(255,255,255,0.05);
-  padding:15px;
+  padding:18px;
   border:2px solid #fff;
   border-radius:6px;
   width:100%;
@@ -62,29 +63,34 @@ canvas {
 
 /* ✅ Ligne inputs + bouton */
 #phoneRow {
-  display:flex; justify-content:center; align-items:center;
+  display:flex; justify-content:center; align-items:stretch;
   width:100%; gap:10px;
 }
 
+/* ✅ Code pays & téléphone même hauteur */
 #countrySelect, #phoneInput {
   background:rgba(255,255,255,0.15);
   border:none; border-radius:4px; color:#fff;
-  text-align:center; padding:10px;
+  text-align:center; padding:12px;
   font-family:'AstrowFont';
+  font-size:16px;
+  height:46px; /* ⬅️ même hauteur */
 }
 
-#countrySelect { flex:0 0 70px; }
+#countrySelect { flex:0 0 90px; } /* un peu plus large */
 #phoneInput { flex:1; }
 
 #confirmBtn {
-  flex:0 0 100px;
-  padding:10px;
+  flex:0 0 110px;
+  padding:12px;
   background:#fff;
   color:#000;
   border-radius:4px;
   cursor:pointer;
   transition:0.3s;
   font-family:'AstrowFont';
+  font-size:16px;
+  height:46px; /* ⬅️ même hauteur */
 }
 
 #confirmBtn:hover {
