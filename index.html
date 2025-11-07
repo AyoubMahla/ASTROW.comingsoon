@@ -24,9 +24,7 @@ canvas {
 
 #content {
   position:relative; z-index:1;
-  display:flex; flex-direction:column;
-  align-items:center;
-  gap:15px;
+  display:flex; flex-direction:column; align-items:center; gap:15px;
 }
 
 #logoContainer { display:flex; align-items:center; gap:15px; }
@@ -45,16 +43,15 @@ canvas {
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:8px;
   width:90%;
   max-width:550px;
+  gap:10px;
 }
 
 #registerForm {
   display:flex;
   flex-direction:column;
   align-items:center;
-  justify-content:center;
   gap:10px;
   background: rgba(255,255,255,0.05);
   padding:15px;
@@ -64,57 +61,57 @@ canvas {
   box-sizing:border-box;
 }
 
-/* ----------------------------------------- */
-/* ✅ Ligne code + téléphone + bouton */
+/* ✅ LIGNE : Country + Phone + Confirm */
 #phoneRow {
   display:flex;
   width:100%;
   gap:10px;
-}
-
-#countrySelect, #phoneInput, #confirmBtn {
-  flex:1;
-  min-width:0;
-  padding:10px;
-  font-size: clamp(0.8rem, 1.2vw, 1rem);
-  border:none;
-  outline:none;
-  font-family:'AstrowFont';
-  text-align:center;
-  box-sizing:border-box;
-}
-
-#countrySelect, #phoneInput {
-  background:rgba(255,255,255,0.15);
-  color:#fff;
-  border-radius:4px;
+  align-items:center;
 }
 
 #countrySelect {
-  flex:0 0 110px;
+  flex:0 0 90px;
+  padding:10px;
+  background:rgba(255,255,255,0.15);
+  color:#fff;
+  border-radius:4px;
+  border:none;
+  text-align:center;
 }
 
-/* ✅ Le bouton Confirm sur la même ligne */
+#phoneInput {
+  flex:1;
+  padding:10px;
+  background:rgba(255,255,255,0.15);
+  color:#fff;
+  border:none;
+  border-radius:4px;
+  text-align:center;
+}
+
 #confirmBtn {
   flex:0 0 120px;
+  padding:10px;
   background:#fff;
-  color:#0a0a0a;
+  color:#000;
+  border-radius:4px;
   cursor:pointer;
   transition:0.3s;
-  border-radius:4px;
 }
-#confirmBtn:hover { background:#000; color:#fff; }
-/* ----------------------------------------- */
+#confirmBtn:hover {
+  background:#000;
+  color:#fff;
+}
 
+/* ✅ Case à cocher EN DEHORS du cadre */
 #consentWrapper {
   font-size:14px;
   color:#fff;
-  text-align:left;
   width:100%;
   display:flex;
   align-items:center;
   gap:6px;
-  margin-bottom:5px;
+  justify-content:center;
 }
 
 #consentWrapper a {
@@ -143,14 +140,17 @@ canvas {
 
   <div id="subtitle">Aim the stars.</div>
   <div id="comingSoon">
-    Coming soon... Enter your number to get notified as soon as the drop goes live and enjoy 10 percent off! 
-    PS le site ne marche toujours pas et necessite des modification, votre numéro ne sera pas sauvegardé veuillez resssayer plus tard
+    Coming soon... Enter your number to get notified as soon as the drop goes live 
+    and enjoy 10 percent off! PS le site ne marche toujours pas, votre numéro ne sera 
+    pas sauvegardé veuillez réessayer plus tard.
   </div>
 
   <div id="formWrapper">
+
+    <!-- ✅ FORMULAIRE (cadre) -->
     <form id="registerForm">
 
-      <!-- ✅ Ligne code + téléphone + bouton -->
+      <!-- ✅ Country + Phone + Confirm sur une ligne -->
       <div id="phoneRow">
         <select id="countrySelect" name="entry.CountryCode">
           <option value="+33">+33</option>
@@ -165,17 +165,19 @@ canvas {
         <button type="submit" id="confirmBtn">Confirm</button>
       </div>
 
-      <div id="consentWrapper">
-        <input type="checkbox" id="consentCheckbox" required>
-        <label for="consentCheckbox">
-          I consent to receive notifications from ASTROW. See 
-          <a href="/privacy" target="_blank">Privacy Policy</a>.
-        </label>
-      </div>
-
     </form>
 
+    <!-- ✅ CASE À COCHER EN DEHORS DU CADRE -->
+    <div id="consentWrapper">
+      <input type="checkbox" id="consentCheckbox" required>
+      <label for="consentCheckbox">
+        I consent to receive notifications from ASTROW. See 
+        <a href="/privacy" target="_blank">Privacy Policy</a>.
+      </label>
+    </div>
+
     <div id="errorMessage"></div>
+
   </div>
 </div>
 
@@ -210,15 +212,10 @@ function animate() {
   requestAnimationFrame(animate);
 }
 animate();
-window.addEventListener('resize', () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-});
 
-// Live formatting
+// Formatting
 const phoneInput = document.getElementById('phoneInput');
 const countrySelect = document.getElementById('countrySelect');
-const errorMessage = document.getElementById('errorMessage');
 
 function formatNumberLive(digits, country) {
   switch (country) {
@@ -231,7 +228,7 @@ function formatNumberLive(digits, country) {
   }
 }
 
-phoneInput.addEventListener('input', (e) => {
+phoneInput.addEventListener('input', e => {
   const pos = e.target.selectionStart;
   const raw = e.target.value;
   const digits = raw.replace(/\D/g, '');
@@ -247,26 +244,24 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
 
   const consentChecked = document.getElementById('consentCheckbox').checked;
   if (!consentChecked) {
-    errorMessage.textContent = 'You must consent to receive notifications.';
-    errorMessage.style.display = 'block';
+    document.getElementById('errorMessage').textContent = 'You must consent.';
+    document.getElementById('errorMessage').style.display = 'block';
     return;
   }
 
   const rawNumber = phoneInput.value.replace(/\D/g, '');
   if (rawNumber.length < 9) {
-    errorMessage.textContent = 'Please enter a valid phone number.';
-    errorMessage.style.display = 'block';
+    document.getElementById('errorMessage').textContent = 'Invalid phone number.';
+    document.getElementById('errorMessage').style.display = 'block';
     return;
   }
 
-  errorMessage.style.display = 'none';
+  document.getElementById('errorMessage').style.display = 'none';
   document.getElementById('content').innerHTML = `
-    <div style="font-size:24px; font-family:'AstrowFont'; color:#fff;">
-      Your number has been registered!<br>
-      You will soon receive a confirmation.
-    </div>
+    <div style="font-size:24px;">Your number has been registered!</div>
   `;
 });
 </script>
+
 </body>
 </html>
