@@ -21,11 +21,12 @@ export default async function handler(req, res) {
 
     const sheets = google.sheets({ version: 'v4', auth });
     await sheets.spreadsheets.values.append({
-      spreadsheetId: process.env.SPREADSHEET_ID,
-      range: 'A:B',
-      valueInputOption: 'RAW',
-      requestBody: { values: [[country, phone]] },
-    });
+  spreadsheetId: process.env.SPREADSHEET_ID,
+  range: 'Sheet1!A:B', // A = country, B = phone
+  valueInputOption: 'RAW',
+  requestBody: { values: [[country, phone]] },
+});
+
 
     return res.status(200).json({ message: 'Number saved!' });
   } catch (error) {
