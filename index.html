@@ -1,335 +1,194 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ASTROW - Mini Drop</title>
+<title>ASTROW - AIM THE STARS</title>
+<link rel="icon" type="image/png" sizes="512x512" href="astrowlogoblack.png">
 <style>
-  /* Reset */
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+@font-face {
+  font-family: 'AstrowFont';
+  src: url('AstrowFont.ttf') format('opentype');
+}
 
-  /* Import police OTF */
-  @font-face {
-    font-family: 'AstrowFont';
-    src: url('AstrowFont.ttf') format('opentype');
-    font-weight: normal;
-    font-style: normal;
-  }
+body, html {
+  width:100%; height:100%; margin:0; padding:0;
+  background:#000; font-family:'AstrowFont'; color:#fff;
+  display:flex; justify-content:center; align-items:center;
+  flex-direction:column; text-align:center; overflow:hidden;
+}
 
-  body, html {
-    width: 100%;
-    height: 100%;
-    font-family: 'AstrowFont';
-    background: #0a0a0a;
-    color: #fff;
-    overflow-x: hidden;
-  }
+canvas {
+  position:fixed; top:0; left:0; width:100%; height:100%;
+  z-index:0; pointer-events:none;
+}
 
-  /* === Canvas Particules === */
-  #particles {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    opacity: 0.7; /* plus lumineux */
-    pointer-events: none;
-  }
+#content {
+  position:relative; z-index:1;
+  display:flex; flex-direction:column; align-items:center; gap:20px;
+  padding: 0 20px;
+}
 
-  /* Loader / Intro */
-  #loader {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 999;
-    flex-direction: column;
-    text-align: center;
-  }
+#logoContainer {
+  display:flex; align-items:center; gap:10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
 
-  #transitionLoader {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 10000;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-  }
+.logo { width:100px; height:auto; }
 
-  #logoContainer {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    cursor: pointer;
-  }
+.star {
+  width:90px; height:90px;
+  background:url('whitestar.png') no-repeat center/contain;
+  animation: spin 5s linear infinite;
+}
 
-  .logo {
-    width: 100px;
-    height: auto;
-  }
+@keyframes spin {
+  0%{transform:rotate(0deg);}
+  100%{transform:rotate(360deg);}
+}
 
-  .star {
-    width: 100px;
-    height: 100px;
-    background: url('whitestar.png') no-repeat center/contain;
-    animation: spin 5s linear infinite;
-  }
+#subtitle { font-size:26px; margin-bottom:0; }
+#comingSoon { font-size:18px; max-width:320px; line-height:1.3; }
 
-  @keyframes spin {
-    0% { transform: rotate(0deg);}
-    100% { transform: rotate(360deg);}
-  }
+/* ======= COMPTE À REBOURS ======= */
+#countdown {
+  font-size: 22px;
+  margin: 15px 0;
+  font-family: 'AstrowFont';
+  color: #fff; /* Blanc */
+}
+#countdown span {
+  font-weight: bold;
+}
 
-  #loader p {
-    margin-top: 20px;
-    font-size: 25px;
-    max-width: 400px;
-    opacity: 0;
-    animation: fadeIn 3s ease forwards;
-  }
+#formWrapper {
+  display:flex; flex-direction:column; align-items:center;
+  width:100%; max-width:480px; gap:15px;
+}
 
-  @keyframes fadeIn {
-    0% { opacity: 0; transform: translateY(20px);}
-    100% { opacity: 1; transform: translateY(0);}
-  }
+#registerForm {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:10px; background:rgba(255,255,255,0.05);
+  padding:18px; border:2px solid #fff; border-radius:6px;
+  width:100%; box-sizing:border-box;
+}
 
-  #enterBtn {
-    margin-top: 25px;
-    padding: 12px 25px;
-    border: 2px solid #fff;
-    background: transparent;
-    color: #fff;
-    cursor: pointer;
-    font-size: 25px;
-    transition: 0.3s;
-    font-family: 'AstrowFont';
-  }
+#emailRow {
+  display:flex; justify-content:center; align-items:stretch;
+  width:100%; gap:10px; flex-wrap: nowrap;
+}
 
-  #enterBtn:hover {
-    background: #fff;
-    color: #0a0a0a;
-  }
+#emailInput, #confirmBtn {
+  font-size:16px;
+  font-family: Arial, Helvetica, sans-serif;
+}
 
-  /* Main section */
-  #main {
-    display: none;
-    width: 100%;
-    min-height: 100vh;
-    position: relative;
-    text-align: center;
-    overflow: hidden;
-    padding: 80px 20px;
-    z-index: 1;
-  }
+#confirmBtn {
+  font-size:16px;
+  font-family: 'AstrowFont';
+}
 
-  #heroText {
-    margin-bottom: 60px;
-    font-size: 2rem;
-  }
+#emailInput {
+  background:rgba(255,255,255,0.15);
+  border:none; border-radius:4px; color:#fff;
+  text-align:center; padding:12px;
+  flex:1; min-width:220px;
+}
 
-  /* Produits */
-  .product-section {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 60px;
-    flex-wrap: wrap;
-  }
+#confirmBtn {
+  flex:0 0 110px;
+  padding:12px;
+  background:#fff;
+  color:#000;
+  border:none;
+  border-radius:4px;
+  cursor:pointer;
+  transition: all 0.3s ease;
+}
 
-  .product {
-    position: relative;
-    width: 250px;
-    cursor: pointer;
-    overflow: hidden;
-    animation: float 3s ease-in-out infinite;
-  }
+#confirmBtn:hover {
+  background:#000;
+  color:#fff;
+}
 
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-12px); }
-  }
+#consentWrapper {
+  font-size:14px; color:#fff;
+  width:100%; display:flex; align-items:center; gap:6px;
+  justify-content:center; margin-top:5px; flex-wrap: wrap;
+  text-align:center;
+}
 
-  .product img {
-    width: 100%;
-    transition: opacity 0.5s ease;
-    display: block;
-  }
+#consentWrapper input { transform:scale(1.2); }
+#consentWrapper a { color:#00ffff; text-decoration:none; }
 
-  .product img.back {
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0;
-  }
+#errorMessage {
+  color:#ff4444; font-size:0.9rem;
+  margin-top:5px; display:none; text-align:center;
+}
 
-  .product:hover img.front {
-    opacity: 0;
+/* ----- Version mobile ----- */
+@media (max-width: 480px) {
+  #registerForm {
+    padding: 12px;
   }
-
-  .product:hover img.back {
-    opacity: 1;
+  #emailRow {
+    flex-wrap: nowrap;
+    gap: 6px;
   }
-
-  .product h2 {
-    text-align: center;
-    margin-top: 10px;
-    font-size: 1.3rem;
+  #emailInput {
+    font-size: 14px;
+    padding: 10px;
   }
-
-  /* Shine effet sur hover */
-  .product::after {
-    content: "";
-    position: absolute;
-    top: 0; left: -75%;
-    width: 50%;
-    height: 100%;
-    background: linear-gradient(120deg, rgba(255,255,255,0.1), rgba(255,255,255,0.5), rgba(255,255,255,0.1));
-    transform: skewX(-25deg);
+  #confirmBtn {
+    flex: 0 0 80px;
+    padding: 10px;
+    font-size: 14px;
   }
-
-  .product:hover::after {
-    animation: shine 1s ease forwards;
-  }
-
-  @keyframes shine {
-    0% { left: -75%; }
-    100% { left: 125%; }
-  }
-
-  #ctaBtn {
-    margin-top: 70px;
-    padding: 15px 30px;
-    border: 2px solid #fff;
-    background: transparent;
-    color: #fff;
-    cursor: pointer;
-    font-size: 1.2rem;
-    transition: 0.3s;
-    font-family: 'AstrowFont';
-  }
-
-  #ctaBtn:hover {
-    background: #fff;
-    color: #0a0a0a;
-  }
-
-  /* Storytelling section */
-  #story {
-    margin-top: 120px;
-    opacity: 0;
-    transform: translateY(40px);
-    transition: 1s;
-    max-width: 700px;
-    margin-left: auto;
-    margin-right: auto;
-    font-size: 1.2rem;
-  }
-
-  #story.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  #story h2 {
-    font-size: 2rem;
-    margin-bottom: 20px;
-  }
-
-  /* Pop-up Shop Now */
-  #shopPopup {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.85);
-    z-index: 10001;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    color: #fff;
-    text-align: center;
-    padding: 20px;
-  }
-
-  #shopPopup button {
-    margin-top: 20px;
-    padding: 10px 25px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    border: 2px solid #fff;
-    background: transparent;
-    color: #fff;
-    font-family: 'AstrowFont';
-  }
-
-  #shopPopup button:hover {
-    background: #fff;
-    color: #0a0a0a;
-  }
+}
 </style>
 </head>
 <body>
 
-<!-- Canvas Particules -->
 <canvas id="particles"></canvas>
 
-<!-- Loader / Intro -->
-<div id="loader">
+<div id="content">
   <div id="logoContainer">
     <img src="ASTROW.png" alt="ASTROW Logo" class="logo">
     <div class="star"></div>
   </div>
-  <p>Aim the stars.</p>
-  <button id="enterBtn">Enter ASTROW World</button>
-</div>
 
-<!-- Transition Loader -->
-<div id="transitionLoader">
-  <div class="transition-star"></div>
-</div>
+  <div id="subtitle">Aim the stars.</div>
+  <div id="comingSoon">
+    Coming soon... Enter your email to be informed as soon as the drop is released!
+  </div>
 
-<!-- Main Section -->
-<div id="main">
-  <div id="heroText">The first spark of ASTROW – Mini Drop Bonnet</div>
+  <!-- ===== COMPTE À REBOURS ===== -->
+  <div id="countdown">
+    <span id="days">00</span> :
+    <span id="hours">00</span> :
+    <span id="minutes">00</span> :
+    <span id="seconds">00</span>
+  </div>
 
-  <section class="product-section">
-    <div class="product">
-      <img src="blackbeaniefront.png" alt="Bonnet Noir Avant" class="front">
-      <img src="blackbeanieback.png" alt="Bonnet Noir Dos" class="back">
-      <h2>Black</h2>
+  <div id="formWrapper">
+    <form id="registerForm">
+      <div id="emailRow">
+        <input type="email" id="emailInput" placeholder="Email address" required>
+        <button type="submit" id="confirmBtn">Confirm</button>
+      </div>
+    </form>
+
+    <div id="consentWrapper">
+      <input type="checkbox" id="consentCheckbox" required>
+      <label for="consentCheckbox">I consent to receive notifications from ASTROW.</label>
     </div>
 
-    <div class="product">
-      <img src="whitebeaniefront.png" alt="Bonnet Blanc Avant" class="front">
-      <img src="whitebeanieback.png" alt="Bonnet Blanc Dos" class="back">
-      <h2>White</h2>
-    </div>
-  </section>
-
-  <button id="ctaBtn">Shop Now</button>
-
-  <section id="story">
-    <h2>L’Âme d’ASTROW</h2>
-    <p>Every drop express a chapter. Every piece motive you to go further. It’s not just streetwear, it’s a challenge.</p>
-  </section>
+    <div id="errorMessage"></div>
+  </div>
 </div>
-
-<!-- Pop-up Shop Now -->
-<div id="shopPopup">
-  <h2>Ready to join ASTROW ?</h2>
-  <button id="confirmShop">Yes !</button>
-  <button id="cancelShop">Cancel</button>
-</div>
-
-<!-- Son d'ambiance -->
-<audio id="introSound" src="song.wav"></audio>
 
 <script>
-/* === Canvas Particules === */
 const canvas = document.getElementById('particles');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
@@ -339,98 +198,91 @@ let stars = Array.from({ length: 100 }, () => ({
   x: Math.random() * canvas.width,
   y: Math.random() * canvas.height,
   r: Math.random() * 1.5 + 0.5,
-  speed: Math.random() * 0.5 + 0.05,
   alpha: Math.random() * 0.5 + 0.5,
-  delta: Math.random() * 0.02 + 0.005
+  delta: Math.random() * 0.02 + 0.005,
+  speed: Math.random() * 0.3 + 0.02
 }));
 
 function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  stars.forEach(star => {
-    star.alpha += star.delta;
-    if (star.alpha > 1 || star.alpha < 0.3) star.delta = -star.delta;
-    ctx.fillStyle = `rgba(255, 255, 255, ${Math.min(star.alpha * 1.8, 1)})`;
-    ctx.shadowBlur = 8;
-    ctx.shadowColor = "white";
+  stars.forEach(s => {
+    s.alpha += s.delta;
+    if (s.alpha > 1 || s.alpha < 0.3) s.delta = -s.delta;
+    ctx.fillStyle = `rgba(255,255,255,${s.alpha})`;
     ctx.beginPath();
-    ctx.arc(star.x, star.y, star.r, 0, 2 * Math.PI);
+    ctx.arc(s.x, s.y, s.r, 0, 2 * Math.PI);
     ctx.fill();
-    star.y += star.speed;
-    if (star.y > canvas.height) star.y = 0;
+    s.y += s.speed;
+    if (s.y > canvas.height) s.y = 0;
   });
   requestAnimationFrame(animate);
 }
 animate();
 
-/* === Loader / Transition === */
-const enterBtn = document.getElementById('enterBtn');
-const loader = document.getElementById('loader');
-const main = document.getElementById('main');
-const transitionLoader = document.getElementById('transitionLoader');
-const introSound = document.getElementById('introSound');
+const form = document.getElementById('registerForm');
+form.addEventListener('submit', async e => {
+  e.preventDefault();
+  const checkbox = document.getElementById('consentCheckbox');
+  const error = document.getElementById('errorMessage');
 
-enterBtn.addEventListener('click', () => {
-  introSound.play();
-  loader.style.transition = "opacity 0.8s ease";
-  loader.style.opacity = 0;
-  setTimeout(() => {
-    loader.style.display = "none";
-    transitionLoader.style.display = "flex";
-    setTimeout(() => {
-      transitionLoader.style.transition = "opacity 1s ease";
-      transitionLoader.style.opacity = 0;
-      setTimeout(() => {
-        transitionLoader.style.display = "none";
-        main.style.display = "block";
-      }, 1000);
-    }, 3000);
-  }, 800);
-});
+  if (!checkbox.checked) {
+    error.textContent = 'You must consent.';
+    error.style.display = 'block';
+    return;
+  }
 
-/* === Storytelling Scroll === */
-window.addEventListener('scroll', () => {
-  const story = document.getElementById('story');
-  if (window.scrollY + window.innerHeight > story.offsetTop + 100) {
-    story.classList.add('visible');
+  error.style.display = 'none';
+  const email = document.getElementById('emailInput').value;
+
+  try {
+    const res = await fetch('https://astrow-coomingsoon.vercel.app/api/saveEmail', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+
+    if (res.ok) {
+      document.getElementById('content').innerHTML =
+        '<div style="font-size:24px;">Your email has been registered!</div>';
+    } else {
+      const data = await res.json();
+      error.textContent = data?.message || 'Error sending data.';
+      error.style.display = 'block';
+    }
+  } catch (err) {
+    error.textContent = 'Network error, please try again.';
+    error.style.display = 'block';
+    console.error(err);
   }
 });
 
-/* ✅ Correction : afficher aussi au chargement initial */
-window.addEventListener('load', () => {
-  const story = document.getElementById('story');
-  if (window.scrollY + window.innerHeight > story.offsetTop + 100) {
-    story.classList.add('visible');
+// ======= COMPTE À REBOURS =======
+const dropDate = new Date("2025-11-20T12:00:00").getTime(); // CHANGE LA DATE ICI
+
+function updateCountdown() {
+  const now = new Date().getTime();
+  const distance = dropDate - now;
+
+  if(distance < 0) {
+    clearInterval(countdownInterval);
+    // REDIRECTION AUTOMATIQUE VERS LA PAGE DE DROP
+    window.location.href = "drop.html"; // Mets ici le chemin exact de ton fichier de drop
+    return;
   }
-});
 
-/* === Shop Now Popup === */
-const ctaBtn = document.getElementById('ctaBtn');
-const shopPopup = document.getElementById('shopPopup');
-const confirmShop = document.getElementById('confirmShop');
-const cancelShop = document.getElementById('cancelShop');
+  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-ctaBtn.addEventListener('click', () => {
-  shopPopup.style.display = 'flex';
-});
+  document.getElementById('days').textContent = days.toString().padStart(2,'0');
+  document.getElementById('hours').textContent = hours.toString().padStart(2,'0');
+  document.getElementById('minutes').textContent = minutes.toString().padStart(2,'0');
+  document.getElementById('seconds').textContent = seconds.toString().padStart(2,'0');
+}
 
-confirmShop.addEventListener('click', () => {
-  window.location.href = "https://yourshopifystore.com";
-});
-
-cancelShop.addEventListener('click', () => {
-  shopPopup.style.display = 'none';
-});
-
-/* === Easter Egg Logo Redirection === */
-const logoContainer = document.getElementById('logoContainer');
-let clickCount = 0;
-logoContainer.addEventListener('click', () => {
-  clickCount++;
-  if (clickCount === 3) {
-    window.location.href = "https://tonliensecret.com";
-    clickCount = 0;
-  }
-});
+const countdownInterval = setInterval(updateCountdown, 1000);
+updateCountdown();
 </script>
 
 </body>
