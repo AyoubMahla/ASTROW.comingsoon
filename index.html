@@ -51,6 +51,17 @@ canvas {
 #subtitle { font-size:26px; margin-bottom:0; }
 #comingSoon { font-size:18px; max-width:320px; line-height:1.3; }
 
+/* ======= COMPTE À REBOURS ======= */
+#countdown {
+  font-size: 22px;
+  margin: 15px 0;
+  font-family: 'AstrowFont';
+  color: #00ffff;
+}
+#countdown span {
+  font-weight: bold;
+}
+
 #formWrapper {
   display:flex; flex-direction:column; align-items:center;
   width:100%; max-width:480px; gap:15px;
@@ -153,6 +164,14 @@ canvas {
     Coming soon... Enter your email to be informed as soon as the drop is released!
   </div>
 
+  <!-- ===== COMPTE À REBOURS ===== -->
+  <div id="countdown">
+    <span id="days">00</span>d :
+    <span id="hours">00</span>h :
+    <span id="minutes">00</span>m :
+    <span id="seconds">00</span>s
+  </div>
+
   <div id="formWrapper">
     <form id="registerForm">
       <div id="emailRow">
@@ -237,6 +256,33 @@ form.addEventListener('submit', async e => {
     console.error(err);
   }
 });
+
+// ======= COMPTE À REBOURS =======
+const dropDate = new Date("2025-11-20T12:00:00").getTime(); // Change la date/heure du drop ici
+
+function updateCountdown() {
+  const now = new Date().getTime();
+  const distance = dropDate - now;
+
+  if(distance < 0) {
+    document.getElementById('countdown').innerHTML = "Le drop est lancé !";
+    clearInterval(countdownInterval);
+    return;
+  }
+
+  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+  document.getElementById('days').textContent = days.toString().padStart(2,'0');
+  document.getElementById('hours').textContent = hours.toString().padStart(2,'0');
+  document.getElementById('minutes').textContent = minutes.toString().padStart(2,'0');
+  document.getElementById('seconds').textContent = seconds.toString().padStart(2,'0');
+}
+
+const countdownInterval = setInterval(updateCountdown, 1000);
+updateCountdown();
 </script>
 
 </body>
